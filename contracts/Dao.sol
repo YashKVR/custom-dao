@@ -1,11 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
+interface IDaoGovernorContract {
+    function getAdmins() external view returns (address[] memory);
+
+    function getMembers() external view returns (address[] memory);
+}
+
 interface IStakingContract {
     function stakedValue(address _account) external view returns (uint256);
 }
 
 contract Dao {
+    IDaoGovernorContract public daoGovernorContract;
     IStakingContract public stakingContract;
     address executionContractAddress;
     address public owner;
@@ -14,11 +21,13 @@ contract Dao {
     uint256 public nextProposal;
 
     constructor(
+        address _daoGovernorContractAddress,
         address _stakingContractAddress,
         address _executionContractAddress
     ) {
         owner = msg.sender;
         nextProposal = 1;
+        daoGovernorContract = IDaoGovernorContract(_daoGovernorContractAddress);
         stakingContract = IStakingContract(_stakingContractAddress);
         executionContractAddress = _executionContractAddress;
     }
@@ -78,16 +87,12 @@ contract Dao {
         return false;
     }
 
-    function addAdmins(address[] memory _admins) public {
-        for (uint i = 0; i < _admins.length; i++) {
-            admins.push(_admins[i]);
-        }
+    function setAdmins() public onlyOwner {
+        admins = daoGovernorContract.getAdmins();
     }
 
-    function addMembers(address[] memory _members) public {
-        for (uint i = 0; i < _members.length; i++) {
-            members.push(_members[i]);
-        }
+    function setMembers() public onlyOwner {
+        members = daoGovernorContract.getMembers();
     }
 
     function createSingleChoiceProposal(
