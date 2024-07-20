@@ -4,12 +4,23 @@ pragma solidity ^0.8.18;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract Staking is ERC20 {
+    address public owner;
     uint256 public secondsInAYear = 3.154e7;
     mapping(address => uint256) public staked;
     mapping(address => uint256) public stakedFromTS;
 
     constructor() ERC20("Staking", "STK") {
+        owner = msg.sender;
         _mint(msg.sender, 1000000e18);
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only Owner can call this function");
+        _;
+    }
+
+    function mintTokens(address _account, uint256 _amount) external onlyOwner {
+        _mint(_account, _amount);
     }
 
     function stake(uint256 amount) external {
