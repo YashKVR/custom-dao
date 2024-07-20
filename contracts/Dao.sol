@@ -51,6 +51,14 @@ contract Dao {
         _;
     }
 
+    modifier onlyGovernor() {
+        require(
+            msg.sender == address(daoGovernorContract),
+            "Only Dao Governor can call this function"
+        );
+        _;
+    }
+
     modifier onlyAdmin() {
         require(
             isAddressInArray(admins, msg.sender),
@@ -87,12 +95,16 @@ contract Dao {
         return false;
     }
 
-    function setAdmins() public onlyOwner {
-        admins = daoGovernorContract.getAdmins();
+    function addAdmins(address[] memory _admins) external onlyGovernor {
+        for (uint i = 0; i < _admins.length; i++) {
+            admins.push(_admins[i]);
+        }
     }
 
-    function setMembers() public onlyOwner {
-        members = daoGovernorContract.getMembers();
+    function addMembers(address[] memory _members) public onlyAdmin {
+        for (uint i = 0; i < _members.length; i++) {
+            members.push(_members[i]);
+        }
     }
 
     function createSingleChoiceProposal(

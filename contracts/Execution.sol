@@ -2,5 +2,5 @@
 pragma solidity ^0.8.18;
 
 contract Execution {
-    function transferBudgetToOwner() public {}
+    function transferBudgetToOwner() external {}
 }
