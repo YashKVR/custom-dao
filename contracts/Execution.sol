@@ -10,5 +10,5 @@ contract Execution {
 
     function transferBudgetToOwner() external {}
 
-    function transferPartialBudgetToOwner() external {}
+    function setASampleNumber() external {}
 }
